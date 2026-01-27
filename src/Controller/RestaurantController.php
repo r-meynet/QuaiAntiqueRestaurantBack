@@ -28,7 +28,7 @@ final class RestaurantController extends AbstractController
         $this->manager->flush();
 
         return $this->json(
-            ['message' => 'Restaurant resource created with ' . $restaurant->getId() . ' id'],
+            ['message' => 'Restaurant ressource created with ' . $restaurant->getId() . ' id'],
             Response::HTTP_CREATED
         );
     }
