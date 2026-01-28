@@ -55,7 +55,7 @@ final class RestaurantController extends AbstractController
             return new JsonResponse($responseData, Response::HTTP_OK, [], true);
         }
 
-        return new JsonResponse(null, Response::HTTP_NOT_FOUND);;
+        return new JsonResponse(null, Response::HTTP_NOT_FOUND);
     }
 
     #[Route('/{id}', name: 'edit', methods: 'PUT')]
