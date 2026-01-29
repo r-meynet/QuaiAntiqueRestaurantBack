@@ -1,0 +1,45 @@
+<?php
+
+namespace App\Controller;
+
+use App\Entity\User;
+use DateTimeImmutable;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Serializer\SerializerInterface;
+
+#[Route('/api', name: 'app_api_')]
+final class SecurityController extends AbstractController
+{
+
+    public function __construct(
+        private EntityManagerInterface $manager,
+        private SerializerInterface $serializer
+    ) {}
+
+    #[Route('/registration', name: 'registration', methods: 'POST')]
+    public function register(Request $request, UserPasswordHasherInterface $passwordHasher): JsonResponse
+    {
+        // On récupère une requête en JSON, à deserializer en objet User
+        $user = $this->serializer->deserialize($request->getContent(), User::class, 'json');
+        // On en récupère le password, qu'on doit hasher
+        $user->setPassword($passwordHasher->hashPassword($user, $user->getPassword()));
+        // Ajout de la date de création
+        $user->setCreatedAt(new DateTimeImmutable());
+
+        // Inscription en BDD
+        $this->manager->persist($user);
+        $this->manager->flush();
+
+        // Retour d'une réponse structurée
+        return new JsonResponse(
+            ['user' => $user->getUserIdentifier(), 'apiToken' => $user->getApiToken(), 'roles' => $user->getRoles()],
+            Response::HTTP_CREATED
+        );
+    }
+}
