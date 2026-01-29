@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 
 #[Route('/api', name: 'app_api_')]
@@ -62,5 +63,47 @@ final class SecurityController extends AbstractController
                 'roles' => $user->getRoles()
             ]
         );
+    }
+
+    #[Route('/me', name: 'me', methods: 'GET')]
+    public function me(#[CurrentUser] ?User $user): JsonResponse
+    {
+        if (null === $user) {
+            return new JsonResponse(['message' => 'missing credentials'], Response::HTTP_UNAUTHORIZED);
+        }
+
+        $responseData = $this->serializer->serialize($user, 'json', ['groups' => 'user:read']);
+
+        return new JsonResponse(
+            $responseData,
+            JsonResponse::HTTP_OK,
+            [],
+            true
+        );
+    }
+
+    #[Route('/edit', name: 'edit', methods: 'PUT')]
+    public function edit(#[CurrentUser] ?User $user, Request $request): JsonResponse
+    {
+        if (null === $user) {
+            return new JsonResponse(['message' => 'missing credentials'], Response::HTTP_UNAUTHORIZED);
+        }
+
+        $user = $this->serializer->deserialize(
+            $request->getContent(),
+            User::class,
+            'json',
+            [
+                AbstractNormalizer::OBJECT_TO_POPULATE => $user,
+                AbstractNormalizer::GROUPS => ['user:write']
+            ]
+        );
+        $user->setUpdatedAt(new DateTimeImmutable());
+
+        $this->manager->flush();
+
+        $responseData = $this->serializer->serialize($user, 'json', ['groups' => 'user:read']);
+
+        return new JsonResponse($responseData, Response::HTTP_CREATED, [], true);
     }
 }
