@@ -23,6 +23,9 @@ COPY . .
 # Installation des dépendances
 RUN composer install --no-dev --optimize-autoloader --no-interaction --no-scripts
 
+# NOUVEAU : Warmup du cache en production
+RUN APP_ENV=prod APP_DEBUG=0 php bin/console cache:warmup
+
 # Permissions - Créer tous les sous-dossiers nécessaires
 RUN mkdir -p /var/www/html/var/cache /var/www/html/var/log && \
     chown -R www-data:www-data /var/www/html/var && \
