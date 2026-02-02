@@ -23,8 +23,10 @@ COPY . .
 # Installation des dépendances
 RUN composer install --no-dev --optimize-autoloader --no-interaction --no-scripts
 
-# Permissions
-RUN mkdir -p /var/www/html/var && chown -R www-data:www-data /var/www/html/var
+# Permissions - Créer tous les sous-dossiers nécessaires
+RUN mkdir -p /var/www/html/var/cache /var/www/html/var/log && \
+    chown -R www-data:www-data /var/www/html/var && \
+    chmod -R 775 /var/www/html/var
 
 # Copie et rend exécutable le script d'entrée
 COPY docker-entrypoint.sh /usr/local/bin/
