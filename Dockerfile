@@ -21,7 +21,7 @@ WORKDIR /var/www/html
 COPY . .
 
 # Installation des dépendances
-RUN composer install --no-dev --optimize-autoloader --no-interaction
+RUN composer install --no-dev --optimize-autoloader --no-interaction --no-scripts
 
 # Permissions
 RUN chown -R www-data:www-data /var/www/html/var
