@@ -6,6 +6,7 @@ use App\Entity\Restaurant;
 use DateTimeImmutable;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
+use Faker;
 
 class RestaurantFixtures extends Fixture
 {
@@ -14,10 +15,12 @@ class RestaurantFixtures extends Fixture
 
     public function load(ObjectManager $manager): void
     {
+        $faker = Faker\Factory::create('fr_FR');
+
         for ($i = 1; $i <= self::RESTAURANT_NB_TUPLES; $i++) {
             $restaurant = (new Restaurant())
-                ->setName('Restaurant n°' . $i)
-                ->setDescription('Description restaurant n°' . $i)
+                ->setName($faker->company())
+                ->setDescription($faker->text())
                 ->setAmOpeningTime([])
                 ->setPmOpeningTime([])
                 ->setMaxGuest(random_int(10, 50))

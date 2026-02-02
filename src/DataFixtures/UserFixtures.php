@@ -8,6 +8,7 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Faker;
 
 class UserFixtures extends Fixture implements FixtureGroupInterface
 {
@@ -17,12 +18,14 @@ class UserFixtures extends Fixture implements FixtureGroupInterface
 
     public function load(ObjectManager $manager): void
     {
+        $faker = Faker\Factory::create('fr_FR');
+        
         for ($i = 1; $i <= self::USER_NB_TUPLES; $i++) {
             $user = (new User())
-                ->setFirstName('Firstname ' . $i)
-                ->setLastName('Lastname ' . $i)
+                ->setFirstName($faker->firstName())
+                ->setLastName($faker->lastName())
                 ->setGuestNumber(random_int(0, 10))
-                ->setEmail('email.' . $i . '@studi.fr')
+                ->setEmail($faker->email())
                 ->setCreatedAt(new DateTimeImmutable());
 
             $user->setPassword($this->passwordHasher->hashPassword($user, 'password' . $i));
