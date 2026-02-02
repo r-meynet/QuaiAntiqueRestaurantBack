@@ -11,13 +11,15 @@ use Doctrine\Persistence\ObjectManager;
 
 class PictureFixtures extends Fixture implements DependentFixtureInterface
 {
+    public const PICTURE_NB_TUPLES = 20;
+
     public function load(ObjectManager $manager): void
     {
-        for ($i = 1; $i <= 20; $i++) {
+        for ($i = 1; $i <= self::PICTURE_NB_TUPLES; $i++) {
             $picture = (new Picture())
                 ->setTitle('Image n°' . $i)
-                ->setSlug('slug-article-title-' . $i)
-                ->setRestaurant($this->getReference('restaurant' . random_int(1, 20), Restaurant::class))
+                ->setSlug('image-n-' . $i)
+                ->setRestaurant($this->getReference(RestaurantFixtures::RESTAURANT_REFERENCE . random_int(1, 20), Restaurant::class))
                 ->setCreatedAt(new DateTimeImmutable());
 
             $manager->persist($picture);

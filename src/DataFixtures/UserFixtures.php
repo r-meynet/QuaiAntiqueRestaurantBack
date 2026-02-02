@@ -5,16 +5,19 @@ namespace App\DataFixtures;
 use App\Entity\User;
 use DateTimeImmutable;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
-class UserFixtures extends Fixture
+class UserFixtures extends Fixture implements FixtureGroupInterface
 {
+    public const USER_NB_TUPLES = 20;
+    
     public function __construct(private UserPasswordHasherInterface $passwordHasher) {}
 
     public function load(ObjectManager $manager): void
     {
-        for ($i = 1; $i <= 20; $i++) {
+        for ($i = 1; $i <= self::USER_NB_TUPLES; $i++) {
             $user = (new User())
                 ->setFirstName('Firstname ' . $i)
                 ->setLastName('Lastname ' . $i)
@@ -29,5 +32,12 @@ class UserFixtures extends Fixture
 
 
         $manager->flush();
+    }
+
+    // Exemple d'implémentation des groupes pour load uniquement certaines fixtures
+    public static function getGroups(): array
+    {
+        // Cette fixture est indépendante des autres
+        return ['independent'];
     }
 }
