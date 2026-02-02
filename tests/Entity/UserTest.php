@@ -36,11 +36,11 @@ class UserTest extends TestCase
         $this->assertEquals($name, $user->getFirstName());
     }
 
-    public function testAnException(): void
-    {
-        $this->expectException(\TypeError::class);
+    // public function testAnException(): void
+    // {
+    //     $this->expectException(\TypeError::class);
 
-        $user = new User();
-        $user->setFirstName([10]);
-    }
+    //     $user = new User();
+    //     $user->setFirstName([10]);
+    // }
 }

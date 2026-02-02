@@ -126,7 +126,7 @@ final class SecurityController extends AbstractController
         );
     }
 
-    #[Route('/me', name: 'me', methods: 'GET')]
+    #[Route('/account/me', name: 'me', methods: 'GET')]
     #[OA\Get(
         path: '/api/me',
         summary: 'Afficher l\'utilisateur',
@@ -172,7 +172,7 @@ final class SecurityController extends AbstractController
         );
     }
 
-    #[Route('/edit', name: 'edit', methods: 'PUT')]
+    #[Route('/account/edit', name: 'edit', methods: 'PUT')]
     #[OA\Put(
         path: '/api/edit',
         summary: 'Modifier un utilisateur',
